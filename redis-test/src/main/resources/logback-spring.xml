@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--注意文件名称不是logback.xml，想使用spring扩展profile支持，要以logback-spring.xml命名-->
+<configuration>
+  <!-- 属性文件:在properties文件中找到对应的配置项 -->
+  <springProperty scope="context" name="logging.path" source="logging.file.path"/>
+  <springProperty scope="context" name="logging.level" source="logging.level.com.kv.redis"/>
+  <springProperty scope="context" name="logging.project" source="spring.application.name"/>
+  <springProperty scope="context" name="logging.maxHistory" source="logging.maxHistory"/>
+  <springProperty scope="context" name="logging.async.queueSize" source="logging.async.queueSize"/>
+
+
+  <!-- 默认的控制台日志输出，一般生产环境都是后台启动，这个没太大作用 -->
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d{HH:mm:ss.SSS} %-5level %logger{80} %X{requestId} - %msg%n</Pattern>
+    </encoder>
+  </appender>
+
+  <!-- 错误日志记录 ： 按照每天生成日志文件 -->
+  <appender name="ERROR-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <append>true</append>
+    <!-- 过滤器，只记录 error 级别的日志 -->
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>error</level>
+    </filter>
+    <!-- 日志名称 -->
+    <file>${logging.path}/${logging.project}/common-error.log</file>
+    <!-- 每天生成一个日志文件，保存30天的日志文件 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!--日志文件输出的文件名:按天回滚 daily -->
+      <fileNamePattern>
+        ${logging.path}/${logging.project}/common-error.%d{yyyy-MM-dd}.%i.log
+      </fileNamePattern>
+      <!--日志文件保留天数-->
+      <maxHistory>7</maxHistory>
+      <timeBasedFileNamingAndTriggeringPolicy
+        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <!-- or whenever the file size reaches xxMB -->
+        <maxFileSize>100MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %X{requestId} - %msg%n</pattern>
+      <!-- 编码 -->
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <appender name="DEBUG-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <append>true</append>
+    <!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>DEBUG</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <file>${logging.path}/${logging.project}/common-debug.log</file>
+
+    <!-- 每天生成一个日志文件，保存30天的日志文件 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!--日志文件输出的文件名:按天回滚 daily -->
+      <FileNamePattern>${logging.path}/${logging.project}/common-debug.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+      <!--日志文件保留天数-->
+      <maxHistory>7</maxHistory>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <!-- or whenever the file size reaches xxMB -->
+        <maxFileSize>100MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %X{requestId} - %msg%n</pattern>
+      <!-- 编码 -->
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <appender name="ROOT-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <append>true</append>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>info</level>
+    </filter>
+    <file>${logging.path}/${logging.project}/common-info.log</file>
+    <!-- 每天生成一个日志文件，保存30天的日志文件 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!--日志文件输出的文件名:按天回滚 daily -->
+      <FileNamePattern>${logging.path}/${logging.project}/common-info.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+      <!--日志文件保留天数-->
+      <maxHistory>${logging.maxHistory}</maxHistory>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <!-- or whenever the file size reaches xxMB -->
+        <maxFileSize>100MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %X{requestId} - %msg%n</pattern>
+      <!-- 编码 -->
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!--异步输出-->
+  <appender name="ASYNC_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>${logging.async.queueSize}</queueSize>
+    <appender-ref ref="ROOT-APPENDER"/>
+  </appender>
+
+
+  <root level="${logging.level}">
+    <appender-ref ref="ASYNC_LOG"/>
+    <appender-ref ref="ERROR-APPENDER"/>
+    <appender-ref ref="DEBUG-APPENDER"/>
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+</configuration>

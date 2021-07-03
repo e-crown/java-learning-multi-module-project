@@ -1,0 +1,66 @@
+server:
+  port: 18500
+  servlet:
+    context-path: /redis
+
+spring:
+  application:
+    name: redis
+  aop:
+    proxy-target-class: true
+  datasource:
+    dynamic:
+      # 是否开启 SQL日志输出，生产环境建议关闭，有性能损耗
+      p6spy: false
+      hikari:
+        connection-timeout: 30000
+        max-lifetime: 1800000
+        max-pool-size: 15
+        min-idle: 5
+        connection-test-query: select 1
+        pool-name: FebsHikariCP
+      # 配置默认数据源
+      primary: primary
+      datasource:
+        # 数据源-1，名称为 primary
+        primary:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: KHUFV897+#12KMDGFSJW
+          url: jdbc:mysql://127.0.0.1:3306/yqd?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 98YYH809J&g9Kn023
+    database: 1
+    timeout: 5000
+    jedis:
+      pool:
+        min-idle: 8
+        max-idle: 500
+        max-active: 2000
+        max-wait: 10000
+
+#mybatis plus 设置
+mybatis-plus:
+  type-aliases-package:
+  mapper-locations: classpath*:mybatis/*/*.xml
+  configuration:
+    #使全局的映射器启用或禁用缓存(分布式下脏读)。
+    cacheEnabled: false
+    #当开启时，任何方法的调用都会加载该对象的所有属性。 否则，每个属性会按需加载（参考 lazyLoadTriggerMethods)。
+    lazyLoadingEnabled: true
+    #允许 JDBC 支持自动生成主键，需要驱动支持。 如果设置为 true 则这个设置强制使用自动生成主键，尽管一些驱动不能支持但仍可正常工作（比如 Derby）。
+    useGeneratedKeys: false
+    #是否开启自动驼峰命名规则（camel case）映射，即从经典数据库列名 A_COLUMN 到经典 Java 属性名 aColumn 的类似映射。
+    mapUnderscoreToCamelCase: true
+    #MyBatis 利用本地缓存机制（Local Cache）防止循环引用（circular references）和加速重复嵌套查询。 默认值为 SESSION，这种情况下会缓存一个会话中执行的所有查询。 若设置值为 STATEMENT，本地会话仅用在语句执行上，对相同 SqlSession 的不同调用将不会共享数据。
+    #分布式下脏读
+    localCacheScope: statement
+    #当没有为参数提供特定的 JDBC 类型时，为空值指定 JDBC 类型。 某些驱动需要指定列的 JDBC 类型，多数情况直接用一般类型即可，比如 NULL、VARCHAR 或 OTHER。
+    jdbc-type-for-null: null
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    # 关闭 mybatis-plus的 banner
+    banner: false

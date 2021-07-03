@@ -1,0 +1,20 @@
+##将 spring.application.name 和logging等放入bootstrap.xml是为了让其预先读到此种变量赋值 从而不出现LOG_PATH_IS_UNDEFINE
+spring:
+  application:
+    name: redis
+#日志配置
+logging:
+  config: classpath:logback-spring.xml
+  async:
+    queueSize: 50
+  maxHistory: 7
+  level:
+    com.chz.mapper: debug
+    com.kv.redis: info
+    org.springframework.web: info
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    org.springframework.boot.autoconfigure: ERROR
+  file:
+    path: logs
