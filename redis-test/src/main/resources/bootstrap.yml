@@ -2,6 +2,7 @@
 spring:
   application:
     name: redis
+
 #日志配置
 logging:
   config: classpath:logback-spring.xml

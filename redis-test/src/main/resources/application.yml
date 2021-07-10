@@ -4,47 +4,30 @@ server:
     context-path: /redis
 
 spring:
-  application:
-    name: redis
+  profiles:
+    active: '@spring.profile@'
   aop:
     proxy-target-class: true
-  datasource:
-    dynamic:
-      # 是否开启 SQL日志输出，生产环境建议关闭，有性能损耗
-      p6spy: false
-      hikari:
-        connection-timeout: 30000
-        max-lifetime: 1800000
-        max-pool-size: 15
-        min-idle: 5
-        connection-test-query: select 1
-        pool-name: FebsHikariCP
-      # 配置默认数据源
-      primary: primary
-      datasource:
-        # 数据源-1，名称为 primary
-        primary:
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          username: root
-          password: KHUFV897+#12KMDGFSJW
-          url: jdbc:mysql://127.0.0.1:3306/yqd?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+  ##jackson 配置
+  jackson:
+    default-property-inclusion: always # 所有字段都不过滤 null值也显示
+    date-format: yyyy-MM-dd HH:mm:ss # 所有日期格式
+    time-zone: GMT+8
+    serialization:
+      #取消默认转换timestamps形式
+      write_dates_as_timestamps: false
+      # 忽略空Bean转json的错误
+      fail_on_empty_beans: false
+    deserialization:
+      #忽略 在json字符串中存在，但是在java对象中不存在对应属性的情况。防止错误
+      fail_on_unknown_properties: false
 
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    password: 98YYH809J&g9Kn023
-    database: 1
-    timeout: 5000
-    jedis:
-      pool:
-        min-idle: 8
-        max-idle: 500
-        max-active: 2000
-        max-wait: 10000
+
+
 
 #mybatis plus 设置
 mybatis-plus:
-  type-aliases-package:
+  type-aliases-package: com.kv.redis.mybatis.entity
   mapper-locations: classpath*:mybatis/*/*.xml
   configuration:
     #使全局的映射器启用或禁用缓存(分布式下脏读)。

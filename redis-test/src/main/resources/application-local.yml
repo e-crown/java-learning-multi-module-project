@@ -1,0 +1,49 @@
+server:
+  port: 18500
+  servlet:
+    context-path: /redis
+
+spring:
+  application:
+    name: redis
+  aop:
+    proxy-target-class: true
+  datasource:
+    dynamic:
+      # 是否开启 SQL日志输出，生产环境建议关闭，有性能损耗
+      p6spy: false
+      hikari:
+        connection-timeout: 30000
+        max-lifetime: 1800000
+        max-pool-size: 15
+        min-idle: 5
+        connection-test-query: select 1
+        pool-name: FebsHikariCP
+      # 配置默认数据源
+      primary: primary
+      datasource:
+        # 数据源-1，名称为 primary
+        primary:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: KHUFV897+#12KMDGFSJW
+          url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 98YYH809J&g9Kn023
+    database: 1
+    timeout: 5000
+    jedis:
+      pool:
+        min-idle: 8
+        max-idle: 500
+        max-active: 2000
+        max-wait: 10000
+redisson:
+  lock:
+    defaultLockWaitTime: 10
+    defaultLockLeaseTime: 30
+
+  
